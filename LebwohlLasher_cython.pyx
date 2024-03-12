@@ -30,6 +30,7 @@ import matplotlib as mpl
 cimport cython
 cimport numpy as np
 ctypedef np.float64_t dtype_t
+from libc.math cimport sin, cos
 np_npymath_deprecated = False
 @cython.boundscheck(False)
 @cython.wraparound(False)
