@@ -164,7 +164,7 @@ def one_energy(arr,ix,iy,nmax):
     en += 0.5*(1.0 - 3.0*np.cos(ang)**2)
     return en
 #=======================================================================
-@jit(nopython=True)
+@jit(nopython=True, parallel=True)
 def all_energy(arr,nmax):
     """
     Arguments:
@@ -177,12 +177,12 @@ def all_energy(arr,nmax):
 	  enall (float) = reduced energy of lattice.
     """
     enall = 0.0
-    for i in range(nmax):
+    for i in prange(nmax):
         for j in range(nmax):
             enall += one_energy(arr,i,j,nmax)
     return enall
 #=======================================================================
-@jit(nopython=True)
+@jit(nopython=True, parallel=True)
 def get_order(arr,nmax):
     """
     Arguments:
@@ -202,7 +202,7 @@ def get_order(arr,nmax):
     # put it in a (3,i,j) array.
     #
     lab = np.vstack((np.cos(arr),np.sin(arr),np.zeros_like(arr))).reshape(3,nmax,nmax)
-    for a in range(3):
+    for a in prange(3):
         for b in range(3):
             for i in range(nmax):
                 for j in range(nmax):
@@ -211,7 +211,6 @@ def get_order(arr,nmax):
     eigenvalues,eigenvectors = np.linalg.eig(Qab)
     return eigenvalues.max()
 #=======================================================================
-@jit(nopython=True)
 def MC_step(arr,Ts,nmax):
     """
     Arguments:
