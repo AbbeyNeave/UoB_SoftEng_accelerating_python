@@ -143,18 +143,23 @@ def one_energy(arr,ix,iy,nmax):
 	Returns:
 	  en (float) = reduced energy of cell.
     """
+    en = 0.0
     ixp = (ix+1)%nmax # These are the coordinates
     ixm = (ix-1)%nmax # of the neighbours
     iyp = (iy+1)%nmax # with wraparound
     iym = (iy-1)%nmax #
-    #
-    # Add together the 4 neighbour contributions
-    # to the energy
-    #
-    cos_angs = np.cos([np.array([arr[ix,iy]-arr[ixp,iy], arr[ix,iy]-arr[ixm,iy], arr[ix,iy]-arr[ix,iyp], arr[ix,iy]-arr[ix,iym]])])
-    ens = 0.5*(np.array([1,1,1,1]) - 3.0*cos_angs**2)
-    en = np.sum(ens)
-    #
+#
+# Add together the 4 neighbour contributions
+# to the energy
+#
+    ang = arr[ix,iy]-arr[ixp,iy]
+    en += 0.5*(1.0 - 3.0*np.cos(ang)**2)
+    ang = arr[ix,iy]-arr[ixm,iy]
+    en += 0.5*(1.0 - 3.0*np.cos(ang)**2)
+    ang = arr[ix,iy]-arr[ix,iyp]
+    en += 0.5*(1.0 - 3.0*np.cos(ang)**2)
+    ang = arr[ix,iy]-arr[ix,iym]
+    en += 0.5*(1.0 - 3.0*np.cos(ang)**2)
     return en
 #=======================================================================
 def all_energy(arr,nmax):
@@ -228,6 +233,7 @@ def MC_step(arr,Ts,nmax):
     xran = np.random.randint(0,high=nmax, size=(nmax,nmax))
     yran = np.random.randint(0,high=nmax, size=(nmax,nmax))
     aran = np.random.normal(scale=scale, size=(nmax,nmax))
+    rand_lattice = np.random.uniform(size=(nmax,nmax))
     for i in range(nmax):
         for j in range(nmax):
             ix = xran[i,j]
@@ -243,7 +249,7 @@ def MC_step(arr,Ts,nmax):
             # exp( -(E_new - E_old) / T* ) >= rand(0,1)
                 boltz = np.exp( -(en1 - en0) / Ts )
 
-                if boltz >= np.random.uniform(0.0,1.0):
+                if boltz >= rand_lattice[i,j]:
                     accept += 1
                 else:
                     arr[ix,iy] -= ang
