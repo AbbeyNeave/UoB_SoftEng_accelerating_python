@@ -211,6 +211,7 @@ def get_order(arr,nmax):
     eigenvalues,eigenvectors = np.linalg.eig(Qab)
     return eigenvalues.max()
 #=======================================================================
+@jit(nopython=True)
 def MC_step(arr,Ts,nmax):
     """
     Arguments:
