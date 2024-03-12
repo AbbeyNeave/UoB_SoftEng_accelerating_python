@@ -173,11 +173,11 @@ def all_energy(arr,nmax):
 	Returns:
 	  enall (float) = reduced energy of lattice.
     """
-    enall = 0.0
+    ens = np.zeros((nmax,nmax))
     for i in range(nmax):
         for j in range(nmax):
-            enall += one_energy(arr,i,j,nmax)
-    return enall
+            ens[i,j] = one_energy(arr,i,j,nmax)
+    return np.sum(ens)
 #=======================================================================
 def get_order(arr,nmax):
     """
