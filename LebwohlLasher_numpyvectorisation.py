@@ -193,17 +193,16 @@ def get_order(arr,nmax):
     """
     Qab = np.zeros((3,3))
     delta = np.eye(3,3)
+    lattice_size = nmax**2
     #
     # Generate a 3D unit vector for each cell (i,j) and
     # put it in a (3,i,j) array.
     #
     lab = np.vstack((np.cos(arr),np.sin(arr),np.zeros_like(arr))).reshape(3,nmax,nmax)
-    for a in range(3):
-        for b in range(3):
-            for i in range(nmax):
-                for j in range(nmax):
-                    Qab[a,b] += 3*lab[a,i,j]*lab[b,i,j] - delta[a,b]
-    Qab = Qab/(2*nmax*nmax)
+    for a in np.array([0,1,2]):
+        for b in np.array([0,1,2]):
+                Qab[a,b] = (3*np.sum(lab[a]*lab[b])) - (delta[a,b]*(lattice_size))
+    Qab = Qab/(2*lattice_size)
     eigenvalues,eigenvectors = np.linalg.eig(Qab)
     return eigenvalues.max()
 #=======================================================================
